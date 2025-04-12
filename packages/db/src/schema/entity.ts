@@ -7,7 +7,7 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core";
 
-const statuses = ["In progress", "Done", "Cancelled"] as const;
+export const statuses = ["In progress", "Done", "Cancelled"] as const;
 
 export const entity = pgTable(
 	"entity",
