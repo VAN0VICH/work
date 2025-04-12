@@ -1,0 +1,5 @@
+{
+	"extends": "@work-profile/tsconfig/base.json",
+	"include": ["."],
+	"exclude": ["node_modules"]
+}
