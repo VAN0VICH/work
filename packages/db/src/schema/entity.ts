@@ -7,7 +7,7 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core";
 
-export const statuses = ["In progress", "Done", "Cancelled"] as const;
+export const entityStatuses = ["In progress", "Done", "Cancelled"] as const;
 
 export const entity = pgTable(
 	"entity",
@@ -15,9 +15,8 @@ export const entity = pgTable(
 		id: varchar("id").notNull().primaryKey(),
 		images: json("images").$type<string[]>(),
 		title: varchar("title"),
-		number: integer("number"),
-		status: text("status", { enum: statuses }),
-		version: integer("version").notNull(),
+		money: integer("money"),
+		status: text("status", { enum: entityStatuses }),
 		createdAt: varchar("created_at").notNull(),
 	},
 	(entity) => ({

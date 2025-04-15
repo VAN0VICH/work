@@ -1,5 +1,5 @@
 {
 	"extends": "@work-profile/tsconfig/internal-package.json",
-	"include": ["src"],
+	"include": ["src", "../../apps/web/app/zero/schema/variant.ts"],
 	"exclude": ["node_modules"]
 }

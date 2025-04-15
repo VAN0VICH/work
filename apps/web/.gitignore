@@ -1,7 +1,0 @@
-.DS_Store
-		"@4seasons-storage/tsconfig": "workspace:^",
-/node_modules/
-
-# React Router
-/.react-router/
-/build/

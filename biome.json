@@ -23,13 +23,16 @@
 				"noDangerouslySetInnerHtml": "warn"
 			},
 			"complexity": {
-				"noStaticOnlyClass": "off"
+				"noStaticOnlyClass": "off",
+				"noForEach":"off"
 			},
 			"correctness": {
 				"noFlatMapIdentity": "off"
 			},
 			"a11y":{
-				"noSvgWithoutTitle":"off"
+				"noSvgWithoutTitle":"off",
+				"useSemanticElements":"off",
+				"useFocusableInteractive":"off"
 			}
 		}
 	},

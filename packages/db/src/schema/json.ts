@@ -5,5 +5,4 @@ export const jsonTable = pgTable("json", {
 	value: json("value")
 		.notNull()
 		.$type<Record<string, unknown> | string | number>(),
-	version: integer("version").notNull(),
 });
