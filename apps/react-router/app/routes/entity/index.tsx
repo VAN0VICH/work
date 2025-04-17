@@ -1,30 +1,35 @@
 import React from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import { EntityPreview } from "~/components/entity/entity-preview";
 import { EntityTable } from "~/components/entity/entity-table";
 import { Separator } from "~/components/ui/separator";
 import { useGlobalState } from "~/zustand/state";
 
 export default function RouteComponent() {
-	const setEntityPreview = useGlobalState((state) => state.setEntityPreview);
-	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
 	const entityID = searchParams.get("entityID");
+	const openEntityPreview = useGlobalState((state) => state.openEntityPreview);
+	const restoreEntityFromState = useGlobalState(
+		(s) => s.restoreEntityFromState,
+	);
 
-	// Set preview open if entityID is in URL on mount
 	React.useEffect(() => {
 		if (entityID) {
-			setEntityPreview(true);
+			openEntityPreview(entityID);
 		}
-	}, [entityID, setEntityPreview]);
+	}, [entityID, openEntityPreview]);
+	React.useEffect(() => {
+		// Add popstate listener
+		window.addEventListener("popstate", restoreEntityFromState);
+		// Initial restore
+		restoreEntityFromState();
 
-	const setEntityID = React.useCallback(
-		(value: string) => {
-			setEntityPreview(true);
-			navigate(`?entityID=${encodeURIComponent(value)}`, { replace: false });
-		},
-		[setEntityPreview, navigate],
-	);
+		// Cleanup listener on unmount
+		return () => {
+			window.removeEventListener("popstate", restoreEntityFromState);
+		};
+	}, [restoreEntityFromState]);
+
 	return (
 		<div>
 			<div className="p-4">
@@ -35,7 +40,7 @@ export default function RouteComponent() {
 				</p>
 			</div>
 			<Separator />
-			<EntityTable setEntityID={setEntityID} />
+			<EntityTable />
 			<EntityPreview />
 		</div>
 	);

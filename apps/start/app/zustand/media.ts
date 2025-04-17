@@ -6,9 +6,9 @@ interface MediaState {
 	isMediaPreviewOpen: boolean;
 	openMediaPreview: (list: string[], index?: number) => void;
 	closeMediaPreview: () => void;
+	restoreMediaFromState: () => void;
 	increaseIndex: () => void;
 	decreaseIndex: () => void;
-	restoreMediaFromState: () => void;
 	setPreviewIndex: (index: number) => void;
 }
 

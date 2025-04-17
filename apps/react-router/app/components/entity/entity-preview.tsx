@@ -39,7 +39,6 @@ import {
 	SelectValue,
 } from "../ui/select";
 import { useMediaState } from "~/zustand/media";
-import { useNavigate, useSearchParams } from "react-router";
 
 const entityInputSchema = z.object({
 	images: z.array(z.instanceof(File)).optional(),
@@ -65,12 +64,10 @@ type Schema = z.infer<typeof entityInputSchema>;
 export function EntityPreview() {
 	const isMobile = useIsMobile();
 	const open = useGlobalState((s) => s.entityPreview);
-	const setOpen_ = useGlobalState((s) => s.setEntityPreview);
-	const [searchParams] = useSearchParams();
-	const entityID = searchParams.get("entityID");
+	const closeEntityPreview = useGlobalState((s) => s.closeEntityPreview);
+	const entityID = useGlobalState((s) => s.entityID);
 	const z = useZero();
 	const [data] = useQuery(z.query.entity.where("id", entityID ?? "").one());
-	const navigate = useNavigate();
 	const [loading, setLoading] = React.useState({
 		imageLoading: false,
 		loading: false,
@@ -112,16 +109,9 @@ export function EntityPreview() {
 	}, [data, form.setValue, form.reset]); // Added entityID dependency for reset
 
 	const setOpen = (val: boolean) => {
-		setOpen_(val);
-		// Reset related state when closing
 		if (!val) {
+			closeEntityPreview();
 			form.reset();
-			const newSearchParams = new URLSearchParams(searchParams);
-			newSearchParams.delete("entityID");
-
-			// Navigate to URL without entityID, preserving history
-			const newQuery = newSearchParams.toString();
-			navigate(newQuery ? `?${newQuery}` : "", { replace: false });
 		}
 	};
 

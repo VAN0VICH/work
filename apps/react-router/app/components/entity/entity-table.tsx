@@ -29,8 +29,8 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 import { toast } from "sonner";
-import { z } from "zod";
 
+import { useQuery } from "@rocicorp/zero/react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -39,10 +39,8 @@ import {
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import {
 	Select,
@@ -60,14 +58,9 @@ import {
 	TableRow,
 } from "~/components/ui/table";
 import type { Entity } from "~/zero/schema";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useZero } from "~/zero/use-zero";
-import { useQuery } from "@rocicorp/zero/react";
 import { useGlobalState } from "~/zustand/state";
-
-interface EntityTableProps {
-	setEntityID: (value: string) => void;
-}
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const columns: ColumnDef<Entity>[] = [
 	{
@@ -191,15 +184,13 @@ const columns: ColumnDef<Entity>[] = [
 	},
 ];
 
-function RowComponent({
-	row,
-	setEntityID,
-}: { row: Row<Entity>; setEntityID: (value: string) => void }) {
+function RowComponent({ row }: { row: Row<Entity> }) {
+	const openEntityPreview = useGlobalState((s) => s.openEntityPreview);
 	return (
 		<TableRow
 			data-state={row.getIsSelected() && "selected"}
 			className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
-			onClick={() => setEntityID(row.original.id)}
+			onClick={() => openEntityPreview(row.original.id)}
 		>
 			{row.getVisibleCells().map((cell) => (
 				<TableCell key={cell.id}>
@@ -210,8 +201,8 @@ function RowComponent({
 	);
 }
 
-export function EntityTable({ setEntityID }: EntityTableProps) {
-	const setEntityPreview = useGlobalState((s) => s.setEntityPreview);
+export function EntityTable() {
+	const openEntityPreview = useGlobalState((s) => s.openEntityPreview);
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [columnVisibility, setColumnVisibility] =
 		React.useState<VisibilityState>({});
@@ -301,7 +292,7 @@ export function EntityTable({ setEntityID }: EntityTableProps) {
 							<span className="hidden sm:inline">Delete</span>
 						</Button>
 					)}
-					<Button size="sm" onClick={() => setEntityPreview(true)}>
+					<Button size="sm" onClick={() => openEntityPreview(null)}>
 						<IconPlus />
 						<span className="hidden sm:inline">Add Entity</span>
 					</Button>
@@ -331,13 +322,7 @@ export function EntityTable({ setEntityID }: EntityTableProps) {
 						{table.getRowModel().rows?.length ? (
 							table
 								.getRowModel()
-								.rows.map((row) => (
-									<RowComponent
-										key={row.id}
-										row={row}
-										setEntityID={setEntityID}
-									/>
-								))
+								.rows.map((row) => <RowComponent key={row.id} row={row} />)
 						) : (
 							<TableRow>
 								<TableCell
