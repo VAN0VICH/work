@@ -380,9 +380,13 @@ export function EntityPreview() {
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											<SelectItem value="In progress">In progress</SelectItem>
-											<SelectItem value="Done">Done</SelectItem>
-											<SelectItem value="Cancelled">Cancelled</SelectItem>
+											<SelectItem value="In progress">
+												{info.common.inProgress}
+											</SelectItem>
+											<SelectItem value="Done">{info.common.done}</SelectItem>
+											<SelectItem value="Cancelled">
+												{info.common.cancelled}
+											</SelectItem>
 										</SelectContent>
 									</Select>
 									<FormMessage />
