@@ -1,4 +1,4 @@
-import { integer, json, pgTable, varchar } from "drizzle-orm/pg-core";
+import { json, pgTable, varchar } from "drizzle-orm/pg-core";
 
 export const jsonTable = pgTable("json", {
 	id: varchar("id").notNull().primaryKey(),

@@ -11,6 +11,7 @@ import { Zero } from "@rocicorp/zero";
 import { schema } from "~/zero/schema";
 import { ZeroProvider } from "@rocicorp/zero/react";
 import { Toaster } from "~/components/ui/sonner";
+import { MediaModalContainer } from "~/components/modal/container";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -47,6 +48,7 @@ function RootComponent() {
 		<RootDocument>
 			<ZeroProvider zero={z}>
 				<Outlet />
+				<MediaModalContainer />
 			</ZeroProvider>
 		</RootDocument>
 	);

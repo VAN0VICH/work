@@ -1,15 +1,15 @@
 import { Link, useMatches } from "@tanstack/react-router";
-import { ModeToggle } from "./mode-toggle";
+import { ModeToggle } from "../mode-toggle";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from "./ui/breadcrumb";
-import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
-import { SidebarTrigger } from "./ui/sidebar";
+} from "../ui/breadcrumb";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
+import { SidebarTrigger } from "../ui/sidebar";
 
 export function SiteHeader() {
 	return (
@@ -61,22 +61,7 @@ export function SiteHeader() {
 					currentPath = `${currentPath}/${segment}`;
 
 					// Determine the label
-					let label: string;
-					if (segment === "storage") {
-						label = "Склад";
-					} else if (segment === "products") {
-						label = "продукты";
-					} else if (
-						Object.keys(match.params).some(
-							//@ts-ignore
-							(param) => match.params[param] === segment,
-						)
-					) {
-						// This is a parameter value
-						label = segment;
-					} else {
-						label = segment;
-					}
+					const label = segment;
 
 					breadcrumbs.push({
 						label,

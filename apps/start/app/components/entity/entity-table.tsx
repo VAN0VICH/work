@@ -6,6 +6,7 @@ import {
 	IconChevronsRight,
 	IconCircleCheckFilled,
 	IconDotsVertical,
+	IconLayoutCollage,
 	IconLayoutColumns,
 	IconLoader,
 	IconPlus,
@@ -58,7 +59,7 @@ import {
 	TableRow,
 } from "~/components/ui/table";
 import type { Entity } from "~/zero/schema";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useZero } from "~/zero/use-zero";
 import { useQuery } from "@rocicorp/zero/react";
 import { useGlobalState } from "~/zustand/state";
@@ -101,12 +102,14 @@ const columns: ColumnDef<Entity>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className="flex justify-center w-[65px] items-center">
-					<Avatar className="size-[60px] rounded-lg">
+					<Avatar className="size-[50px] rounded-lg">
 						<AvatarImage
 							src={row.original.images ? row.original.images[0] : undefined}
 							alt="product image"
 						/>
-						<AvatarFallback>CN</AvatarFallback>
+						<AvatarFallback className="rounded-lg">
+							<IconLayoutCollage />
+						</AvatarFallback>
 					</Avatar>
 				</div>
 			);
@@ -141,13 +144,15 @@ const columns: ColumnDef<Entity>[] = [
 	{
 		accessorKey: "money",
 		header: "Money",
-		cell: ({ row }) => <p>{row.original.money}</p>,
+		cell: ({ row }) => <p>{row.original.money / 100}</p>,
 	},
 	{
 		id: "actions",
 		cell: ({ row }) => {
 			const z = useZero();
-			function deleteRow() {
+			function deleteRow(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+				e.preventDefault();
+				e.stopPropagation();
 				toast.promise(z.mutate.entity.delete({ id: row.original.id }), {
 					success: () => {
 						return "Entity deleted.";
@@ -170,7 +175,6 @@ const columns: ColumnDef<Entity>[] = [
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end" className="w-32">
-						<DropdownMenuItem>Edit</DropdownMenuItem>
 						<DropdownMenuItem variant="destructive" onClick={deleteRow}>
 							Delete
 						</DropdownMenuItem>
@@ -181,11 +185,15 @@ const columns: ColumnDef<Entity>[] = [
 	},
 ];
 
-function RowComponent({ row }: { row: Row<Entity> }) {
+function RowComponent({
+	row,
+	setEntityID,
+}: { row: Row<Entity>; setEntityID: (value: string) => void }) {
 	return (
 		<TableRow
 			data-state={row.getIsSelected() && "selected"}
 			className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
+			onClick={() => setEntityID(row.original.id)}
 		>
 			{row.getVisibleCells().map((cell) => (
 				<TableCell key={cell.id}>
@@ -304,7 +312,13 @@ export function EntityTable({ deleteEntity, setEntityID }: EntityTableProps) {
 						{table.getRowModel().rows?.length ? (
 							table
 								.getRowModel()
-								.rows.map((row) => <RowComponent key={row.id} row={row} />)
+								.rows.map((row) => (
+									<RowComponent
+										key={row.id}
+										row={row}
+										setEntityID={setEntityID}
+									/>
+								))
 						) : (
 							<TableRow>
 								<TableCell

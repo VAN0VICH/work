@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
-import { EntityPreview } from "~/components/entity-preview";
-import { EntityTable } from "~/components/entity-table";
+import { EntityPreview } from "~/components/entity/entity-preview";
+import { EntityTable } from "~/components/entity/entity-table";
 import { useGlobalState } from "~/zustand/state";
 
 export const Route = createFileRoute("/__main/entity/")({
