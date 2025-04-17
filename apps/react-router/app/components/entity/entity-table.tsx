@@ -10,6 +10,7 @@ import {
 	IconLayoutColumns,
 	IconLoader,
 	IconPlus,
+	IconTrash,
 } from "@tabler/icons-react";
 import {
 	type ColumnDef,
@@ -65,7 +66,6 @@ import { useQuery } from "@rocicorp/zero/react";
 import { useGlobalState } from "~/zustand/state";
 
 interface EntityTableProps {
-	deleteEntity: (keys: string[]) => void;
 	setEntityID: (value: string) => void;
 }
 
@@ -73,7 +73,10 @@ const columns: ColumnDef<Entity>[] = [
 	{
 		id: "select",
 		header: ({ table }) => (
-			<div className="flex items-center justify-center">
+			<div
+				className="flex items-center justify-center"
+				onClick={(e) => e.stopPropagation()}
+			>
 				<Checkbox
 					checked={
 						table.getIsAllPageRowsSelected() ||
@@ -85,7 +88,10 @@ const columns: ColumnDef<Entity>[] = [
 			</div>
 		),
 		cell: ({ row }) => (
-			<div className="flex items-center justify-center">
+			<div
+				className="flex items-center justify-center"
+				onClick={(e) => e.stopPropagation()}
+			>
 				<Checkbox
 					checked={row.getIsSelected()}
 					onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -204,7 +210,7 @@ function RowComponent({
 	);
 }
 
-export function EntityTable({ deleteEntity, setEntityID }: EntityTableProps) {
+export function EntityTable({ setEntityID }: EntityTableProps) {
 	const setEntityPreview = useGlobalState((s) => s.setEntityPreview);
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [columnVisibility, setColumnVisibility] =
@@ -219,8 +225,13 @@ export function EntityTable({ deleteEntity, setEntityID }: EntityTableProps) {
 	});
 
 	const z = useZero();
-	const [data, dataResult] = useQuery(z.query.entity);
-	console.log("dataResult", dataResult);
+	const [data] = useQuery(z.query.entity);
+	const deleteRows = async () => {
+		const rows = table.getFilteredSelectedRowModel().rows;
+		await Promise.all(
+			rows.map((r) => z.mutate.entity.delete({ id: r.original.id })),
+		);
+	};
 
 	const table = useReactTable({
 		data,
@@ -283,10 +294,18 @@ export function EntityTable({ deleteEntity, setEntityID }: EntityTableProps) {
 							})}
 					</DropdownMenuContent>
 				</DropdownMenu>
-				<Button size="sm" onClick={() => setEntityPreview(true)}>
-					<IconPlus />
-					<span className="hidden sm:inline">Add Entity</span>
-				</Button>
+				<div className="flex gap-2">
+					{table.getFilteredSelectedRowModel().rows.length > 0 && (
+						<Button variant="destructive" size="sm" onClick={deleteRows}>
+							<IconTrash />
+							<span className="hidden sm:inline">Delete</span>
+						</Button>
+					)}
+					<Button size="sm" onClick={() => setEntityPreview(true)}>
+						<IconPlus />
+						<span className="hidden sm:inline">Add Entity</span>
+					</Button>
+				</div>
 			</div>
 			<div className="overflow-hidden rounded-lg border">
 				<Table>

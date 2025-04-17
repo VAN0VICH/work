@@ -32,7 +32,8 @@
 			"a11y":{
 				"noSvgWithoutTitle":"off",
 				"useSemanticElements":"off",
-				"useFocusableInteractive":"off"
+				"useFocusableInteractive":"off",
+				"useKeyWithClickEvents":"off"
 			}
 		}
 	},

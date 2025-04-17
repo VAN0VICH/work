@@ -10,6 +10,7 @@ import {
 	IconLayoutColumns,
 	IconLoader,
 	IconPlus,
+	IconTrash,
 } from "@tabler/icons-react";
 import {
 	type ColumnDef,
@@ -283,10 +284,18 @@ export function EntityTable({ deleteEntity, setEntityID }: EntityTableProps) {
 							})}
 					</DropdownMenuContent>
 				</DropdownMenu>
-				<Button size="sm" onClick={() => setEntityPreview(true)}>
-					<IconPlus />
-					<span className="hidden sm:inline">Add Entity</span>
-				</Button>
+				<div className="flex gap-2">
+					{table.getFilteredSelectedRowModel().rows.length > 0 && (
+						<Button variant="destructive" size="sm">
+							<IconTrash />
+							<span className="hidden sm:inline">Delete</span>
+						</Button>
+					)}
+					<Button size="sm" onClick={() => setEntityPreview(true)}>
+						<IconPlus />
+						<span className="hidden sm:inline">Add Entity</span>
+					</Button>
+				</div>
 			</div>
 			<div className="overflow-hidden rounded-lg border">
 				<Table>

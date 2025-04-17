@@ -9,6 +9,7 @@ interface MediaState {
 	increaseIndex: () => void;
 	decreaseIndex: () => void;
 	restoreMediaFromState: () => void;
+	setPreviewIndex: (index: number) => void;
 }
 
 export const useMediaState = create<MediaState>((set, get) => ({
@@ -87,5 +88,17 @@ export const useMediaState = create<MediaState>((set, get) => ({
 				"",
 			);
 		}
+	},
+	setPreviewIndex: (newIndex) => {
+		set({ mediaPreviewIndex: newIndex });
+		history.pushState(
+			{
+				...history.state,
+				mediaPreview: true,
+				mediaPreviewList: JSON.stringify(get().mediaPreviewList),
+				mediaPreviewIndex: newIndex,
+			},
+			"",
+		);
 	},
 }));

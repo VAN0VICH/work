@@ -38,6 +38,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
+import { useMediaState } from "~/zustand/media";
+import { useNavigate, useSearchParams } from "react-router";
 
 const entityInputSchema = z.object({
 	images: z.array(z.instanceof(File)).optional(),
@@ -64,14 +66,16 @@ export function EntityPreview() {
 	const isMobile = useIsMobile();
 	const open = useGlobalState((s) => s.entityPreview);
 	const setOpen_ = useGlobalState((s) => s.setEntityPreview);
-	const entityID = useGlobalState((s) => s.entityID);
+	const [searchParams] = useSearchParams();
+	const entityID = searchParams.get("entityID");
 	const z = useZero();
 	const [data] = useQuery(z.query.entity.where("id", entityID ?? "").one());
-	const setEntityID = useGlobalState((s) => s.setEntityID_);
+	const navigate = useNavigate();
 	const [loading, setLoading] = React.useState({
 		imageLoading: false,
 		loading: false,
 	});
+	const openMediaPreview = useMediaState((s) => s.openMediaPreview);
 
 	const form = useForm<Schema>({
 		resolver: zodResolver(entityInputSchema),
@@ -82,6 +86,13 @@ export function EntityPreview() {
 			amount: 0, // Default amount to 0
 		},
 	});
+
+	const previewImages = React.useCallback(
+		(index: number) => {
+			data?.images?.length && openMediaPreview(data?.images ?? [], index);
+		},
+		[data, openMediaPreview],
+	);
 
 	React.useEffect(() => {
 		if (data) {
@@ -104,8 +115,13 @@ export function EntityPreview() {
 		setOpen_(val);
 		// Reset related state when closing
 		if (!val) {
-			setEntityID(null);
 			form.reset();
+			const newSearchParams = new URLSearchParams(searchParams);
+			newSearchParams.delete("entityID");
+
+			// Navigate to URL without entityID, preserving history
+			const newQuery = newSearchParams.toString();
+			navigate(newQuery ? `?${newQuery}` : "", { replace: false });
 		}
 	};
 
@@ -289,7 +305,9 @@ export function EntityPreview() {
 										{entityID && data?.images && data.images.length > 0 && (
 											<div className="mb-2 flex flex-wrap gap-2">
 												{data.images.map((imgUrl, index) => (
+													// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
 													<img
+														onClick={() => previewImages(index)}
 														key={index}
 														src={imgUrl}
 														alt={`Entity ${index + 1}`}
@@ -378,7 +396,7 @@ export function EntityPreview() {
 				</Form>
 				<DrawerFooter>
 					{loading.imageLoading && (
-						<p className="flex gap-2 text-sm">Loading images...</p>
+						<p className="flex gap-2 text-sm">Saving images...</p>
 					)}
 					<Button
 						type="submit"
