@@ -145,7 +145,11 @@ function getColumns({
 					) : (
 						<IconLoader />
 					)}
-					{row.original.status}
+					{row.original.status === "Cancelled"
+						? info.common.cancelled
+						: row.original.status === "Done"
+							? info.common.done
+							: info.common.inProgress}
 				</Badge>
 			),
 		},
