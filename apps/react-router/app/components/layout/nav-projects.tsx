@@ -24,6 +24,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "~/components/ui/sidebar";
+import { useUserPreferences } from "~/hooks/use-user-preferences";
 
 export function NavProjects({
 	items,
@@ -35,10 +36,14 @@ export function NavProjects({
 	}[];
 }) {
 	const { isMobile } = useSidebar();
+	const { language } = useUserPreferences();
 
 	return (
 		<SidebarGroup className="group-data-[collapsible=icon]:hidden">
-			<SidebarGroupLabel>Projects</SidebarGroupLabel>
+			<SidebarGroupLabel>
+				{" "}
+				{language === "en" ? "Projects" : "Проекты"}
+			</SidebarGroupLabel>
 			<SidebarMenu>
 				{items.map((item) => (
 					<SidebarMenuItem key={item.name}>

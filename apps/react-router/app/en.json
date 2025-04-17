@@ -1,0 +1,52 @@
+{
+	"common": {
+		"main": "Main",
+		"images": "Images",
+		"title": "Title",
+		"money": "Money",
+		"status": "Status",
+		"inProgress": "In progress",
+		"done": "Done",
+		"cancelled": "Cancelled",
+		"darkMode": "Dark Mode",
+		"projects": "Projects"
+	},
+	"entityPage": {
+		"title": "CRUD app",
+		"addOrEditEntity": "Add or edit an entity",
+		"description": "Simple and fast CRUD (create, read, update, delete) app with image uploading."
+	},
+	"entityTable": {
+		"thumbnail": "Thumbnail",
+		"title": "Title",
+		"status": "Status",
+		"money": "Money",
+		"rowsSelected": "row(s) selected.",
+		"rowsPerPage": "Rows per page",
+		"page": "Page",
+		"customizeColumns": "Customize Columns",
+		"noResults": "No results."
+	},
+	"profile": {
+		"description": "Hi there, my name is Ivan. I created this website to showcase my front-end skills. Feel free to explore. Hope you like it."
+	},
+	"action": {
+		"delete": "Delete",
+		"addEntity": "Add entity",
+		"save": "Save",
+		"clickHereForImages": "Click here for images"
+	},
+	"actionResult": {
+		"entityUpdated": "Entity updated.",
+		"updatingEntity": "Updating entity...",
+		"errorUpdatingEntity": "Error updating entity...",
+		"entityDeleted": "Entity deleted.",
+		"errorDeletingEntity": "Error deleting entity",
+		"deletingEntity": "Deleting entity...",
+		"creatingEntity": "Creating entity...",
+		"entityCreated": "New entity successfully created.",
+		"errorCreatingEntity": "Error creating entity.",
+		"savingImages": "Saving images...",
+		"emailCopied": "Email copied."
+	}
+}

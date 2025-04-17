@@ -7,12 +7,14 @@ import Dropzone, {
 	type FileRejection,
 } from "react-dropzone";
 import { toast } from "sonner";
-
+import ru from "~/ru.json";
+import en from "~/en.json";
 import { cn, formatBytes } from "~/lib/utils";
 import { useControllableState } from "~/hooks/use-controllable-state";
 import { Button } from "~/components/ui/button";
 import { Progress } from "~/components/ui/progress";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import { useUserPreferences } from "~/hooks/use-user-preferences";
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
 	/**
@@ -107,6 +109,8 @@ export function FileUploader(props: FileUploaderProps) {
 		className,
 		...dropzoneProps
 	} = props;
+	const { language } = useUserPreferences();
+	const info = language === "en" ? en : ru;
 
 	const [files, setFiles] = useControllableState({
 		prop: valueProp,
@@ -219,9 +223,6 @@ export function FileUploader(props: FileUploaderProps) {
 										aria-hidden="true"
 									/>
 								</div>
-								<p className="font-medium text-muted-foreground">
-									Нажмите здесь
-								</p>
 							</div>
 						) : (
 							<div className="flex flex-col items-center justify-center gap-4 sm:px-5">
@@ -233,7 +234,7 @@ export function FileUploader(props: FileUploaderProps) {
 								</div>
 								<div className="flex flex-col gap-px">
 									<p className="font-medium text-sm text-muted-foreground">
-										Нажмите здесь для картинок
+										{info.action.clickHereForImages}
 									</p>
 								</div>
 							</div>

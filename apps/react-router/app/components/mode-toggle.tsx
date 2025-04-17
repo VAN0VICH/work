@@ -9,8 +9,8 @@ import { useFetcher } from "react-router";
 import { useUserPreferences } from "~/hooks/use-user-preferences";
 
 export function ModeToggle() {
-	const fetcher = useFetcher<typeof action>();
 	const { theme } = useUserPreferences();
+	const fetcher = useFetcher<typeof action>();
 	const toggleTheme = React.useCallback(() => {
 		return fetcher.submit(
 			{ theme: theme === "dark" ? "light" : "dark" },

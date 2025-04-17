@@ -16,12 +16,15 @@ export async function action({ request }: ActionFunctionArgs) {
 		submission.status === "success",
 		"Invalid preference received",
 	);
-	const { sidebarState, theme } = submission.value;
+	const { sidebarState, theme, language } = submission.value;
 	if (sidebarState) {
 		cookie.sidebarState = sidebarState;
 	}
 	if (theme) {
 		cookie.theme = theme;
+	}
+	if (language) {
+		cookie.language = language;
 	}
 	const maxAge = theme === "inherit" ? -1 : 31536000;
 

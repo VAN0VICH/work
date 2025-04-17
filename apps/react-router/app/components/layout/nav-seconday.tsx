@@ -27,6 +27,7 @@ export function NavSecondary({
 	}[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
 	const [mounted, setMounted] = React.useState(false);
+	const { language } = useUserPreferences();
 
 	const fetcher = useFetcher<typeof action>();
 	const { theme } = useUserPreferences();
@@ -63,7 +64,7 @@ export function NavSecondary({
 							{/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
 							<label>
 								<IconBrightness />
-								<span>Dark Mode</span>
+								<span>{language === "en" ? "Dark Mode" : "Темный режим"}</span>
 								{mounted ? (
 									<Switch
 										className="ml-auto"

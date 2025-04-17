@@ -61,128 +61,138 @@ import type { Entity } from "~/zero/schema";
 import { useZero } from "~/zero/use-zero";
 import { useGlobalState } from "~/zustand/state";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import ru from "~/ru.json";
+import en from "~/en.json";
+import { useUserPreferences } from "~/hooks/use-user-preferences";
 
-const columns: ColumnDef<Entity>[] = [
-	{
-		id: "select",
-		header: ({ table }) => (
-			<div
-				className="flex items-center justify-center"
-				onClick={(e) => e.stopPropagation()}
-			>
-				<Checkbox
-					checked={
-						table.getIsAllPageRowsSelected() ||
-						(table.getIsSomePageRowsSelected() && "indeterminate")
-					}
-					onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-					aria-label="Select all"
-				/>
-			</div>
-		),
-		cell: ({ row }) => (
-			<div
-				className="flex items-center justify-center"
-				onClick={(e) => e.stopPropagation()}
-			>
-				<Checkbox
-					checked={row.getIsSelected()}
-					onCheckedChange={(value) => row.toggleSelected(!!value)}
-					aria-label="Select row"
-				/>
-			</div>
-		),
-		enableSorting: false,
-		enableHiding: false,
-	},
-	{
-		accessorKey: "thumbnail",
-		header: "Thumbnail",
-		cell: ({ row }) => {
-			return (
-				<div className="flex justify-center w-[65px] items-center">
-					<Avatar className="size-[50px] rounded-lg">
-						<AvatarImage
-							src={row.original.images ? row.original.images[0] : undefined}
-							alt="product image"
-						/>
-						<AvatarFallback className="rounded-lg">
-							<IconLayoutCollage />
-						</AvatarFallback>
-					</Avatar>
+function getColumns({
+	language,
+}: { language: "en" | "ru" }): ColumnDef<Entity>[] {
+	const info = language === "en" ? en : ru;
+	return [
+		{
+			id: "select",
+			header: ({ table }) => (
+				<div
+					className="flex items-center justify-center"
+					onClick={(e) => e.stopPropagation()}
+				>
+					<Checkbox
+						checked={
+							table.getIsAllPageRowsSelected() ||
+							(table.getIsSomePageRowsSelected() && "indeterminate")
+						}
+						onCheckedChange={(value) =>
+							table.toggleAllPageRowsSelected(!!value)
+						}
+						aria-label="Select all"
+					/>
 				</div>
-			);
+			),
+			cell: ({ row }) => (
+				<div
+					className="flex items-center justify-center"
+					onClick={(e) => e.stopPropagation()}
+				>
+					<Checkbox
+						checked={row.getIsSelected()}
+						onCheckedChange={(value) => row.toggleSelected(!!value)}
+						aria-label="Select row"
+					/>
+				</div>
+			),
+			enableSorting: false,
+			enableHiding: false,
+		},
+		{
+			accessorKey: "thumbnail",
+			header: info.entityTable.thumbnail,
+			cell: ({ row }) => {
+				return (
+					<div className="flex justify-center w-[65px] items-center">
+						<Avatar className="size-[50px] rounded-lg">
+							<AvatarImage
+								src={row.original.images ? row.original.images[0] : undefined}
+								alt="product image"
+							/>
+							<AvatarFallback className="rounded-lg">
+								<IconLayoutCollage />
+							</AvatarFallback>
+						</Avatar>
+					</div>
+				);
+			},
+
+			enableSorting: false,
+			enableHiding: true,
+		},
+		{
+			accessorKey: "title",
+			header: info.entityTable.title,
+			cell: ({ row }) => {
+				return <p>{row.original.title}</p>;
+			},
+			enableHiding: false,
 		},
 
-		enableSorting: false,
-		enableHiding: true,
-	},
-	{
-		accessorKey: "title",
-		header: "Title",
-		cell: ({ row }) => {
-			return <p>{row.original.title}</p>;
+		{
+			accessorKey: "status",
+			header: info.entityTable.status,
+			cell: ({ row }) => (
+				<Badge variant="outline" className="text-muted-foreground px-1.5">
+					{row.original.status === "Done" ? (
+						<IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+					) : (
+						<IconLoader />
+					)}
+					{row.original.status}
+				</Badge>
+			),
 		},
-		enableHiding: false,
-	},
-
-	{
-		accessorKey: "status",
-		header: "Status",
-		cell: ({ row }) => (
-			<Badge variant="outline" className="text-muted-foreground px-1.5">
-				{row.original.status === "Done" ? (
-					<IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-				) : (
-					<IconLoader />
-				)}
-				{row.original.status}
-			</Badge>
-		),
-	},
-	{
-		accessorKey: "money",
-		header: "Money",
-		cell: ({ row }) => <p>{row.original.money / 100}</p>,
-	},
-	{
-		id: "actions",
-		cell: ({ row }) => {
-			const z = useZero();
-			function deleteRow(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-				e.preventDefault();
-				e.stopPropagation();
-				toast.promise(z.mutate.entity.delete({ id: row.original.id }), {
-					success: () => {
-						return "Entity deleted.";
-					},
-					error: () => {
-						return "Error deleting entity.";
-					},
-				});
-			}
-			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button
-							variant="ghost"
-							className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-							size="icon"
-						>
-							<IconDotsVertical />
-							<span className="sr-only">Open menu</span>
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end" className="w-32">
-						<DropdownMenuItem variant="destructive" onClick={deleteRow}>
-							Delete
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			);
+		{
+			accessorKey: "money",
+			header: info.entityTable.money,
+			cell: ({ row }) => <p>{row.original.money / 100}</p>,
 		},
-	},
-];
+		{
+			id: "actions",
+			cell: ({ row }) => {
+				const z = useZero();
+				function deleteRow(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+					e.preventDefault();
+					e.stopPropagation();
+					toast.promise(z.mutate.entity.delete({ id: row.original.id }), {
+						success: () => {
+							return "Entity deleted.";
+						},
+						error: () => {
+							return "Error deleting entity.";
+						},
+					});
+				}
+				return (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button
+								variant="ghost"
+								className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+								size="icon"
+							>
+								<IconDotsVertical />
+								<span className="sr-only">Open menu</span>
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" className="w-32">
+							<DropdownMenuItem variant="destructive" onClick={deleteRow}>
+								{info.action.delete}
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				);
+			},
+		},
+	];
+}
 
 function RowComponent({ row }: { row: Row<Entity> }) {
 	const openEntityPreview = useGlobalState((s) => s.openEntityPreview);
@@ -214,13 +224,30 @@ export function EntityTable() {
 		pageIndex: 0,
 		pageSize: 10,
 	});
+	const { language } = useUserPreferences();
+	const info = language === "en" ? en : ru;
+	const columns = React.useMemo(
+		() => getColumns({ language: language ?? "ru" }),
+		[language],
+	);
 
 	const z = useZero();
 	const [data] = useQuery(z.query.entity);
-	const deleteRows = async () => {
+	const deleteRows = () => {
 		const rows = table.getFilteredSelectedRowModel().rows;
-		await Promise.all(
-			rows.map((r) => z.mutate.entity.delete({ id: r.original.id })),
+		toast.promise(
+			Promise.all(
+				rows.map((r) => z.mutate.entity.delete({ id: r.original.id })),
+			),
+			{
+				success: () => {
+					return info.actionResult.entityDeleted;
+				},
+				error: () => {
+					return info.actionResult.errorDeletingEntity;
+				},
+				loading: info.actionResult.deletingEntity,
+			},
 		);
 	};
 
@@ -256,7 +283,9 @@ export function EntityTable() {
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" size="sm">
 							<IconLayoutColumns />
-							<span className="hidden lg:inline">Customize Columns</span>
+							<span className="hidden lg:inline">
+								{info.entityTable.customizeColumns}
+							</span>
 							<span className="lg:hidden">Columns</span>
 							<IconChevronDown />
 						</Button>
@@ -289,12 +318,12 @@ export function EntityTable() {
 					{table.getFilteredSelectedRowModel().rows.length > 0 && (
 						<Button variant="destructive" size="sm" onClick={deleteRows}>
 							<IconTrash />
-							<span className="hidden sm:inline">Delete</span>
+							<span className="hidden sm:inline">{info.action.delete}</span>
 						</Button>
 					)}
 					<Button size="sm" onClick={() => openEntityPreview(null)}>
 						<IconPlus />
-						<span className="hidden sm:inline">Add Entity</span>
+						<span className="hidden sm:inline">{info.action.addEntity}</span>
 					</Button>
 				</div>
 			</div>
@@ -329,7 +358,7 @@ export function EntityTable() {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{info.entityTable.noResults}
 								</TableCell>
 							</TableRow>
 						)}
@@ -339,12 +368,13 @@ export function EntityTable() {
 			<div className="flex items-center justify-between px-4">
 				<div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
 					{table.getFilteredSelectedRowModel().rows.length} of{" "}
-					{table.getFilteredRowModel().rows.length} row(s) selected.
+					{`${table.getFilteredRowModel().rows.length} ${info.entityTable.rowsSelected}`}
+					.
 				</div>
 				<div className="flex w-full items-center gap-8 lg:w-fit">
 					<div className="hidden items-center gap-2 lg:flex">
 						<Label htmlFor="rows-per-page" className="text-sm font-medium">
-							Rows per page
+							{info.entityTable.rowsPerPage}
 						</Label>
 						<Select
 							value={`${table.getState().pagination.pageSize}`}
@@ -367,8 +397,8 @@ export function EntityTable() {
 						</Select>
 					</div>
 					<div className="flex w-fit items-center justify-center text-sm font-medium">
-						Page {table.getState().pagination.pageIndex + 1} of{" "}
-						{table.getPageCount()}
+						{info.entityTable.page} {table.getState().pagination.pageIndex + 1}{" "}
+						of {table.getPageCount()}
 					</div>
 					<div className="ml-auto flex items-center gap-2 lg:ml-0">
 						<Button

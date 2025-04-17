@@ -219,9 +219,6 @@ export function FileUploader(props: FileUploaderProps) {
 										aria-hidden="true"
 									/>
 								</div>
-								<p className="font-medium text-muted-foreground">
-									Нажмите здесь
-								</p>
 							</div>
 						) : (
 							<div className="flex flex-col items-center justify-center gap-4 sm:px-5">

@@ -14,6 +14,8 @@ import { useZero } from "~/zero/use-zero";
 import { useGlobalState } from "~/zustand/state";
 import { FileUploader } from "../file-uploader";
 import { Button } from "../ui/button";
+import ru from "~/ru.json";
+import en from "~/en.json";
 import {
 	Drawer,
 	DrawerContent,
@@ -39,6 +41,7 @@ import {
 	SelectValue,
 } from "../ui/select";
 import { useMediaState } from "~/zustand/media";
+import { useUserPreferences } from "~/hooks/use-user-preferences";
 
 const entityInputSchema = z.object({
 	images: z.array(z.instanceof(File)).optional(),
@@ -66,7 +69,9 @@ export function EntityPreview() {
 	const open = useGlobalState((s) => s.entityPreview);
 	const closeEntityPreview = useGlobalState((s) => s.closeEntityPreview);
 	const entityID = useGlobalState((s) => s.entityID);
+	const { language } = useUserPreferences();
 	const z = useZero();
+	const info = language === "en" ? en : ru;
 	const [data] = useQuery(z.query.entity.where("id", entityID ?? "").one());
 	const [loading, setLoading] = React.useState({
 		imageLoading: false,
@@ -217,9 +222,9 @@ export function EntityPreview() {
 						images: images || [], // Use uploaded images or empty array
 					}),
 					{
-						loading: "Creating entity...",
-						success: "New entity successfully created.",
-						error: "Error creating entity.",
+						loading: info.actionResult.creatingEntity,
+						success: info.actionResult.entityCreated,
+						error: info.actionResult.errorCreatingEntity,
 					},
 				);
 			} else {
@@ -246,9 +251,9 @@ export function EntityPreview() {
 							...(images || data?.images ? { images: updatedImages } : {}),
 						}),
 						{
-							loading: "Updating entity...",
-							success: "Entity updated.",
-							error: "Error updating entity.",
+							loading: info.actionResult.updatingEntity,
+							success: info.actionResult.entityUpdated,
+							error: info.actionResult.errorUpdatingEntity,
 						},
 					);
 			}
@@ -275,8 +280,10 @@ export function EntityPreview() {
 		>
 			<DrawerContent>
 				<DrawerHeader className="gap-1">
-					<DrawerTitle>{data?.title ?? "Add entity"}</DrawerTitle>
-					<DrawerDescription>Add or edit an entity</DrawerDescription>
+					<DrawerTitle>{data?.title ?? info.action.addEntity}</DrawerTitle>
+					<DrawerDescription>
+						{info.entityPage.addOrEditEntity}
+					</DrawerDescription>
 				</DrawerHeader>
 				<Form {...form}>
 					<form
@@ -290,7 +297,7 @@ export function EntityPreview() {
 							render={({ field }) => (
 								<div className="space-y-6">
 									<FormItem className="w-full">
-										<FormLabel>Картинки</FormLabel>
+										<FormLabel>{info.common.images}</FormLabel>
 										{/* Display existing images if any */}
 										{entityID && data?.images && data.images.length > 0 && (
 											<div className="mb-2 flex flex-wrap gap-2">
@@ -325,7 +332,7 @@ export function EntityPreview() {
 							name="title"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Title</FormLabel>
+									<FormLabel>{info.common.title}</FormLabel>
 									<FormControl>
 										<Input placeholder="Title" {...field} />
 									</FormControl>
@@ -338,7 +345,7 @@ export function EntityPreview() {
 							name="amount"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Money</FormLabel>
+									<FormLabel>{info.common.money}</FormLabel>
 									<FormControl>
 										<Input
 											placeholder="0.00"
@@ -362,7 +369,7 @@ export function EntityPreview() {
 							name="status"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Status</FormLabel>
+									<FormLabel>{info.common.status}</FormLabel>
 									<Select
 										onValueChange={field.onChange}
 										defaultValue={field.value}
@@ -386,7 +393,9 @@ export function EntityPreview() {
 				</Form>
 				<DrawerFooter>
 					{loading.imageLoading && (
-						<p className="flex gap-2 text-sm">Saving images...</p>
+						<p className="flex gap-2 text-sm">
+							{info.actionResult.savingImages}
+						</p>
 					)}
 					<Button
 						type="submit"
@@ -398,7 +407,7 @@ export function EntityPreview() {
 						) : (
 							<IconCircleCheck />
 						)}
-						Save
+						{info.action.save}
 					</Button>
 				</DrawerFooter>
 			</DrawerContent>

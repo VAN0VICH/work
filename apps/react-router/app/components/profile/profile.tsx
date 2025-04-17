@@ -1,6 +1,11 @@
+import { useUserPreferences } from "~/hooks/use-user-preferences";
 import { useMediaState } from "~/zustand/media";
+import en from "~/en.json";
+import ru from "~/ru.json";
 
 export function Profile() {
+	const { language } = useUserPreferences();
+	const info = language === "en" ? en : ru;
 	const openMediaPreview = useMediaState((s) => s.openMediaPreview);
 	const previewHeaderImage = () => {
 		openMediaPreview([
@@ -59,8 +64,7 @@ export function Profile() {
 
 					<div className="max-h-100 overflow-y-auto pt-2">
 						<p className="text-base text-neutral-600 dark:text-neutral-300">
-							Hi there, my name is Ivan. I created this website to showcase my
-							front-end skills. Feel free to explore. Hope you like it.
+							{info.profile.description}
 						</p>
 					</div>
 				</div>

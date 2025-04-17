@@ -8,9 +8,11 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	useSidebar,
 } from "~/components/ui/sidebar";
 import { useCopyToClipboard } from "~/hooks/use-copy-to-clipboard";
+import ru from "~/ru.json";
+import en from "~/en.json";
+import { useUserPreferences } from "~/hooks/use-user-preferences";
 
 export function NavUser({
 	user,
@@ -22,9 +24,12 @@ export function NavUser({
 	};
 }) {
 	const { copy } = useCopyToClipboard();
+	const { language } = useUserPreferences();
+	const info = language === "en" ? en : ru;
+
 	const copyEmail = () => {
 		copy("van0vich.mail@gmail.com");
-		toast.success("Email copied");
+		toast.success(info.actionResult.emailCopied);
 	};
 
 	return (

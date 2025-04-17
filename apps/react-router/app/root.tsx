@@ -37,6 +37,7 @@ export const links: Route.LinksFunction = () => [
 export const PreferencesSchema = z.object({
 	sidebarState: z.enum(["open", "closed"] as const).optional(),
 	theme: z.enum(["inherit", "light", "dark"] as const).optional(),
+	language: z.enum(["ru", "en"] as const).optional(),
 });
 export type Preferences = z.infer<typeof PreferencesSchema>;
 export type RootLoaderData = {
@@ -62,9 +63,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 			userPrefs: {
 				theme: prefsCookie.theme,
 				sidebarState: prefsCookie.sidebarState,
-				accentColor: prefsCookie.accentColor,
-				scaling: prefsCookie.scaling,
-				grayColor: prefsCookie.grayColor,
+				language: prefsCookie.language,
 			},
 			userContext: {
 				tempUserID: userContextCookie.tempUserID,
