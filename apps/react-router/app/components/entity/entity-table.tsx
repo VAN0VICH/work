@@ -232,7 +232,7 @@ export function EntityTable() {
 	);
 
 	const z = useZero();
-	const [data] = useQuery(z.query.entity);
+	const [data] = useQuery(z.query.entity.orderBy("created_at", "desc"));
 	const deleteRows = () => {
 		const rows = table.getFilteredSelectedRowModel().rows;
 		toast.promise(
