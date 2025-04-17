@@ -13,7 +13,7 @@ export default function Layout() {
 			}
 		>
 			<AppSidebar variant="inset" />
-			<SidebarInset>
+			<SidebarInset className="dark:bg-neutral-800 dark:border">
 				<SiteHeader />
 				<div className="h-14 lg:hidden" />
 				<div className="flex flex-1 flex-col">
